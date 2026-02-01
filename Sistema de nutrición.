@@ -1,0 +1,103 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class NutrientCalculator {
+
+    // Clase estructurada para un ingrediente
+    static class Ingredient {
+        double grams;
+        String group; // "proteina", "grasa", "carbohidrato"
+
+        Ingredient(double grams, String group) {
+            this.grams = grams;
+            this.group = group;
+        }
+    }
+
+    // Función para ingresar datos de ingredientes
+    static ArrayList<Ingredient> inputIngredients(Scanner scanner) {
+        ArrayList<Ingredient> ingredients = new ArrayList<>();
+        System.out.println("Ingrese la cantidad de ingredientes: ");
+        int numIngredients = scanner.nextInt();
+        scanner.nextLine(); // Limpiar buffer
+
+        for (int i = 0; i < numIngredients; i++) {
+            System.out.println("Ingrediente " + (i + 1) + ":");
+            System.out.print("Cantidad en gramos: ");
+            double grams = scanner.nextDouble();
+            scanner.nextLine(); // Limpiar buffer
+
+            System.out.print("Grupo (proteina, grasa, carbohidrato): ");
+            String group = scanner.nextLine().toLowerCase();
+
+            // Validación básica
+            if (!group.equals("proteina") && !group.equals("grasa") && !group.equals("carbohidrato")) {
+                System.out.println("Grupo inválido. Usando 'carbohidrato' por defecto.");
+                group = "carbohidrato";
+            }
+
+            ingredients.add(new Ingredient(grams, group));
+        }
+        return ingredients;
+    }
+
+    // Función para calcular totales
+    static double[] calculateTotals(ArrayList<Ingredient> ingredients) {
+        double totalProtein = 0, totalFat = 0, totalCarb = 0;
+        for (Ingredient ing : ingredients) {
+            if (ing.group.equals("proteina")) {
+                totalProtein += ing.grams;
+            } else if (ing.group.equals("grasa")) {
+                totalFat += ing.grams;
+            } else if (ing.group.equals("carbohidrato")) {
+                totalCarb += ing.grams;
+            }
+        }
+
+        double totalCalories = (4 * totalProtein) + (9 * totalFat) + (4 * totalCarb);
+        return new double[]{totalProtein, totalFat, totalCarb, totalCalories};
+    }
+
+    // Función para verificar si es aceptable
+    static String isAcceptable(double[] totals) {
+        double protein = totals[0];
+        double fat = totals[1];
+        double carb = totals[2];
+        double calories = totals[3];
+
+        if (calories == 0) return "No se ingresaron nutrientes válidos.";
+
+        double fatPercentage = (9 * fat / calories) * 100;
+        double carbPercentage = (4 * carb / calories) * 100;
+
+        boolean caloriesOk = calories >= 500 && calories <= 700;
+        boolean proteinOk = protein >= 15;
+        boolean fatOk = fatPercentage < 30;
+        boolean carbOk = carbPercentage >= 45 && carbPercentage <= 65;
+
+        if (caloriesOk && proteinOk && fatOk && carbOk) {
+            return "Aceptable";
+        } else {
+            return "No aceptable (revise calorías: " + calories + ", proteínas: " + protein + "g, grasas: " + fatPercentage + "%, carbs: " + carbPercentage + "%)";
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Sistema de Cálculo de Nutrientes");
+
+        ArrayList<Ingredient> ingredients = inputIngredients(scanner);
+        double[] totals = calculateTotals(ingredients);
+
+        System.out.println("\nResultados:");
+        System.out.println("Proteínas totales: " + totals[0] + "g");
+        System.out.println("Grasas totales: " + totals[1] + "g");
+        System.out.println("Carbohidratos totales: " + totals[2] + "g");
+        System.out.println("Calorías totales: " + totals[3]);
+
+        String status = isAcceptable(totals);
+        System.out.println("Valor nutricional: " + status);
+
+        scanner.close();
+    }
+}
