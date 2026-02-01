@@ -1,0 +1,68 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Scanner;
+
+public class MovieSorter {
+
+    // Clase estructurada para una película
+    static class Movie {
+        String title;
+        int year;
+        String genre;
+
+        Movie(String title, int year, String genre) {
+            this.title = title;
+            this.year = year;
+            this.genre = genre;
+        }
+    }
+
+    // Función para ingresar datos de películas
+    static ArrayList<Movie> inputMovies(Scanner scanner) {
+        ArrayList<Movie> movies = new ArrayList<>();
+        System.out.println("Ingrese la cantidad de películas: ");
+        int numMovies = scanner.nextInt();
+        scanner.nextLine(); // Limpiar buffer
+
+        for (int i = 0; i < numMovies; i++) {
+            System.out.println("Película " + (i + 1) + ":");
+            System.out.print("Título: ");
+            String title = scanner.nextLine();
+
+            System.out.print("Año de lanzamiento: ");
+            int year = scanner.nextInt();
+            scanner.nextLine(); // Limpiar buffer
+
+            System.out.print("Género: ");
+            String genre = scanner.nextLine();
+
+            movies.add(new Movie(title, year, genre));
+        }
+        return movies;
+    }
+
+    // Función para ordenar por año (usando Comparator para claridad)
+    static void sortMoviesByYear(ArrayList<Movie> movies) {
+        Collections.sort(movies, Comparator.comparingInt(m -> m.year));
+    }
+
+    // Función para mostrar la lista
+    static void displayMovies(ArrayList<Movie> movies) {
+        System.out.println("\nLista de películas ordenadas por año:");
+        for (Movie movie : movies) {
+            System.out.println("Título: " + movie.title + ", Año: " + movie.year + ", Género: " + movie.genre);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Sistema de Ordenamiento de Películas");
+
+        ArrayList<Movie> movies = inputMovies(scanner);
+        sortMoviesByYear(movies);
+        displayMovies(movies);
+
+        scanner.close();
+    }
+}
